@@ -30,6 +30,7 @@
 (def handle-pr-or-push (-> (api/finished)
                            (custom-middleware)
                            (api/clone-ref)
+                           (api/extract-github-token)
                            (api/create-ref-from-event)
                            (api/add-skill-config)
                            (api/log-event)
