@@ -19,11 +19,11 @@
                               (-> request :data :Push first :after :message)
                               "unknown")]
           (<! (handler (assoc request
-                         :status-message (gstring/format "Operation %s - %s/%s - %s"
-                                                         (-> request :extensions :operationName)
-                                                         (-> request :ref :owner)
-                                                         (-> request :ref :repo)
-                                                         commit-message)))))
+                              :status-message (gstring/format "Operation %s - %s/%s - %s"
+                                                              (-> request :extensions :operationName)
+                                                              (-> request :ref :owner)
+                                                              (-> request :ref :repo)
+                                                              commit-message)))))
         (catch :default ex
           (<! (handler (assoc request :status-message (str ex)))))))))
 
