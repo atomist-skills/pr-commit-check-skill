@@ -1,0 +1,5 @@
+apiVersion: 1
+package:
+  type: atomist/node-skill
+  command: npm ci && npm run skill
+  tag: false

@@ -1,1 +1,17 @@
-{:namespace "atomist"}
+{:description "This section supports markdown",
+ :license "unknown",
+ :displayName "pr commit check skill",
+ :name "pr-commit-check-skill",
+ :author "slimslenderslacks",
+ :iconUrl
+ "https://raw.githubusercontent.com/cljs/logo/master/cljs.png",
+ :homepageUrl
+ "https://github.com/atomist-skills/pr-commit-check-skill",
+ :namespace "atomist",
+ :artifacts
+ {:gcf
+  [{:name "package-cljs-skill",
+    :entryPoint "eventhandler",
+    :memory 512, 
+    :runtime "nodejs10", 
+    :timeout 60}]}}
