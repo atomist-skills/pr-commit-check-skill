@@ -10,12 +10,22 @@
 (defn custom-middleware [handler]
   (fn [request]
     (go
-      (<! (handler (assoc request
-                     :status-message (gstring/format "Operation %s - %s/%s - %s"
-                                                     (-> request :extensions :operationName)
-                                                     (-> request :ref :owner)
-                                                     (-> request :ref :repo)
-                                                     (-> request :ref :sha))))))))
+      (api/trace "custom-middleware")
+      (try
+        (let [{:keys [token]} request
+              {:keys [owner repo sha]} (:ref request)
+              commit-message (or
+                              (-> request :data :PullRequest first :mergeCommit :message)
+                              (-> request :data :Push first :after :message)
+                              "unknown")]
+          (<! (handler (assoc request
+                         :status-message (gstring/format "Operation %s - %s/%s - %s"
+                                                         (-> request :extensions :operationName)
+                                                         (-> request :ref :owner)
+                                                         (-> request :ref :repo)
+                                                         commit-message)))))
+        (catch :default ex
+          (<! (handler (assoc request :status-message (str ex)))))))))
 
 (def handle-pr-or-push (-> (api/finished)
                            (custom-middleware)
