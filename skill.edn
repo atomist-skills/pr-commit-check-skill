@@ -2,7 +2,7 @@
  :license "unknown",
  :displayName "pr commit check skill",
  :name "pr-commit-check-skill",
- :author "slimslenderslacks",
+ :author "jim@atomist.com",
  :iconUrl
  "https://raw.githubusercontent.com/cljs/logo/master/cljs.png",
  :homepageUrl

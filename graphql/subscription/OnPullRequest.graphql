@@ -1,0 +1,35 @@
+subscription OnPullRequest {
+  PullRequest {
+    number
+    title
+    repo {
+      id
+      name
+      owner
+      org {
+        id
+        scmProvider {
+          id
+          providerId
+          providerType
+        }
+      }
+    }
+    destinationBranch {
+      id
+      name
+    }
+    labels {
+      id
+      name
+    }
+    mergeCommit {
+      message
+      sha
+    }
+    commits {
+      sha
+      message
+    }
+  }
+}

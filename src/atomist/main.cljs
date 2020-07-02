@@ -1,25 +1,34 @@
 (ns atomist.main
   (:require [atomist.api :as api]
-            [cljs.pprint :refer [pprint]]
             [cljs.core.async :refer [<!]]
             [goog.string.format]
             [clojure.data]
-            [atomist.cljs-log :as log]
+            [goog.string :as gstring]
             [atomist.github])
   (:require-macros [cljs.core.async.macros :refer [go]]))
 
 (defn custom-middleware [handler]
   (fn [request]
     (go
-      (log/info "do something useful here")
-      (<! (handler request)))))
+      (<! (handler (assoc request
+                     :status-message (gstring/format "Operation %s - %s/%s - %s"
+                                                     (-> request :extensions :operationName)
+                                                     (-> request :ref :owner)
+                                                     (-> request :ref :repo)
+                                                     (-> request :ref :sha))))))))
+
+(def handle-pr-or-push (-> (api/finished)
+                           (custom-middleware)
+                           (api/clone-ref)
+                           (api/create-ref-from-event)
+                           (api/add-skill-config)
+                           (api/log-event)
+                           (api/status :send-status :status-message)))
 
 (defn ^:export handler
-  [data sendreponse]
+  [data callback]
   (api/make-request
    data
-   sendreponse
-   (-> (api/finished :message "----> event handler finished")
-       (custom-middleware)
-       (api/log-event)
-       (api/status))))
+   callback
+   (api/dispatch {:OnPullRequest handle-pr-or-push
+                  :OnAnyPush handle-pr-or-push})))

@@ -3,3 +3,6 @@
 index.js
 node_modules
 .atomist
+.idea
+*.iml
+.clj-kondo/.cache

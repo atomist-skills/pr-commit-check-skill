@@ -8,7 +8,7 @@
     "skill": "npm run build && npm run bundle"
   },
   "dependencies": {
-    "@atomist/api-cljs": "^0.4.25",
+    "@atomist/api-cljs": "^0.4.58",
     "js-yaml": "^3.14.0"
   },
   "devDependencies": {
