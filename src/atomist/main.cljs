@@ -11,11 +11,11 @@
   (fn [request]
     (go
       (<! (handler (assoc request
-                     :status-message (gstring/format "Operation %s - %s/%s - %s"
-                                                     (-> request :extensions :operationName)
-                                                     (-> request :ref :owner)
-                                                     (-> request :ref :repo)
-                                                     (-> request :ref :sha))))))))
+                          :status-message (gstring/format "Operation %s - %s/%s - %s"
+                                                          (-> request :extensions :operationName)
+                                                          (-> request :ref :owner)
+                                                          (-> request :ref :repo)
+                                                          (-> request :ref :sha))))))))
 
 (def handle-pr-or-push (-> (api/finished)
                            (custom-middleware)
