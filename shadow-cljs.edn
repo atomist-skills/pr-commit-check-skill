@@ -1,0 +1,11 @@
+{:deps {:aliases [:dev :test]},
+ :builds
+ {:dev
+  {:target :node-library,
+   :exports {:handler atomist.main/handler},
+   :output-to "index.js"},
+  :release
+  {:target :node-library,
+   :output-to "index.js",
+   :exports {:handler atomist.main/handler},
+   :compiler-options {:optimizations :advanced}}}}
