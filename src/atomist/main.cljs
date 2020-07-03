@@ -4,7 +4,8 @@
             [goog.string.format]
             [clojure.data]
             [goog.string :as gstring]
-            [atomist.github])
+            [atomist.github]
+            [atomist.cljs-log :as log])
   (:require-macros [cljs.core.async.macros :refer [go]]))
 
 (defn custom-middleware [handler]
@@ -12,18 +13,13 @@
     (go
       (api/trace "custom-middleware")
       (try
-        (let [{:keys [token]} request
-              {:keys [owner repo sha]} (:ref request)
-              commit-message (or
-                              (-> request :data :PullRequest first :mergeCommit :message)
-                              (-> request :data :Push first :after :message)
-                              "unknown")]
-          (<! (handler (assoc request
-                              :status-message (gstring/format "Operation %s - %s/%s - %s"
-                                                              (-> request :extensions :operationName)
-                                                              (-> request :ref :owner)
-                                                              (-> request :ref :repo)
-                                                              commit-message)))))
+        (let [{:keys [owner repo]} (:ref request)
+              {:keys [number] :as pr} (-> request :data :PullRequest first)
+              commit-message (-> pr :head :message)]
+          ;; TODO check the commit-message here
+          (log/debugf "check the commit-message `%s`" commit-message)
+          ;; Note - the request contains a token (:token request) so we can call GitHub apis here
+          (<! (handler (assoc request :status-message (gstring/format "Check HEAD commit message on #%d - %s/%s" number owner repo)))))
         (catch :default ex
           (<! (handler (assoc request :status-message (str ex)))))))))
 
@@ -41,5 +37,4 @@
   (api/make-request
    data
    callback
-   (api/dispatch {:OnPullRequest handle-pr-or-push
-                  :OnAnyPush handle-pr-or-push})))
+   (api/dispatch {:OnPullRequest handle-pr-or-push})))

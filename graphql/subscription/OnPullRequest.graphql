@@ -15,6 +15,10 @@ subscription OnPullRequest {
         }
       }
     }
+    head {
+      sha
+      message
+    }
     destinationBranch {
       id
       name
@@ -22,10 +26,6 @@ subscription OnPullRequest {
     labels {
       id
       name
-    }
-    mergeCommit {
-      message
-      sha
     }
     commits {
       sha
