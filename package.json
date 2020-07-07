@@ -9,7 +9,7 @@
     "test": "shadow-cljs compile test"
   },
   "dependencies": {
-    "@atomist/api-cljs": "^0.4.58",
+    "@atomist/api-cljs": "^0.4.59",
     "js-yaml": "^3.14.0"
   },
   "devDependencies": {

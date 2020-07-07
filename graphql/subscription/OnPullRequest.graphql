@@ -2,6 +2,7 @@ subscription OnPullRequest {
   PullRequest {
     number
     title
+    branchName
     repo {
       id
       name
