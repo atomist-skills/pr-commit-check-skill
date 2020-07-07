@@ -15,15 +15,18 @@
         (when (= "failure"
                  (-> request
                      :checkrun/conclusion))
-          (<! (github/post-pr-comment request
-                                      (-> request
-                                          :data
-                                          :PullRequest
-                                          first
-                                          :number)
-                                      (-> request
-                                          :checkrun/output
-                                          :summary))))
+          (log/debugf
+           "post-pr-comment status %d"
+           (:status
+            (<! (github/post-pr-comment (merge (:ref request) {:token (:token request)})
+                                        (-> request
+                                            :data
+                                            :PullRequest
+                                            first
+                                            :number)
+                                        (-> request
+                                            :checkrun/output
+                                            :summary))))))
         (<! (handler request)))))
 
 (def rules
