@@ -1,9 +1,11 @@
 .cpcache
 .shadow-cljs
 index.js
+tests.js
 node_modules
 .atomist
 .idea
 *.iml
 .clj-kondo/.cache
 .nrepl-port
+classes

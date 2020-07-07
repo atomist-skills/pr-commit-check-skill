@@ -5,7 +5,8 @@
     "build:watch": "shadow-cljs watch dev",
     "build": "shadow-cljs release release",
     "bundle": "bundle",
-    "skill": "npm run build && npm run bundle"
+    "skill": "npm run build && npm run bundle",
+    "test": "shadow-cljs compile test"
   },
   "dependencies": {
     "@atomist/api-cljs": "^0.4.58",

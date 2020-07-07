@@ -8,4 +8,9 @@
   {:target :node-library,
    :output-to "index.js",
    :exports {:handler atomist.main/handler},
-   :compiler-options {:optimizations :advanced}}}}
+   :compiler-options {:optimizations :advanced}}
+  :test
+  {:target :node-test
+   :output-to "tests.js"
+   :ns-regexp "-t$"
+   :autorun true}}}
