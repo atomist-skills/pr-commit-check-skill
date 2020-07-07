@@ -17,16 +17,16 @@
                      :checkrun/conclusion))
           (log/debugf
            "post-pr-comment status %d"
-           (:status
-            (<! (github/post-pr-comment (merge (:ref request) {:token (:token request)})
-                                        (-> request
-                                            :data
-                                            :PullRequest
-                                            first
-                                            :number)
-                                        (-> request
-                                            :checkrun/output
-                                            :summary))))))
+           (:status (<! (github/post-pr-comment
+                         (merge (:ref request) {:token (:token request)})
+                         (-> request
+                             :data
+                             :PullRequest
+                             first
+                             :number)
+                         (-> request
+                             :checkrun/output
+                             :summary))))))
         (<! (handler request)))))
 
 (def rules
