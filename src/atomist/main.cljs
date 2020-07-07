@@ -13,8 +13,8 @@
   (fn [request]
     (go (api/trace "send-pr-comment")
         (when (= "failure"
-               (-> request
-                   :checkrun/conclusion))
+                 (-> request
+                     :checkrun/conclusion))
           (<! (github/post-pr-comment request
                                       (-> request
                                           :data
