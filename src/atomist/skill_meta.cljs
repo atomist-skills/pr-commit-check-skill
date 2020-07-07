@@ -3,6 +3,6 @@
 
 (def module-name "pr-commit-check-skill")
 (def path ".")
-(def version "0.1.7")
-(def tag "0.1.7")
-(def generated-at "2020-07-07T06:42:22Z")
+(def version "0.1.8")
+(def tag "0.1.8")
+(def generated-at "2020-07-07T07:00:02Z")
