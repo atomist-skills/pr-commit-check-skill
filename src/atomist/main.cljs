@@ -4,7 +4,6 @@
             [goog.string.format]
             [clojure.data]
             [goog.string :as gstring]
-            [atomist.github]
             [atomist.cljs-log :as log]
             [atomist.github :as github])
   (:require-macros [cljs.core.async.macros :refer [go]]))
@@ -14,7 +13,7 @@
   (fn [request]
     (go
       (api/trace "send-pr-comment")
-      (if (= "failure" (-> request :checkrun/conclusion))
+      (when (= "failure" (-> request :checkrun/conclusion))
         (<! (github/post-pr-comment request (-> request :data :PullRequest first :number) (-> request :checkrun/output :summary))))
       (<! (handler request)))))
 
