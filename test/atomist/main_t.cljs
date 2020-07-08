@@ -67,20 +67,21 @@
       (done)))))
 
 (deftest skip-prs-not-being-opened
-  (async done
-         (go (let [response (<! ((main/only-process-pr-branch-updates #(go %))
-                                 {:operation "OnPullRequest",
-                                  :correlation_id "corrid",
-                                  :api_version "1",
-                                  :data {:PullRequest [{:action "edited"}]}}))]
-               (are [x y]
-                    (= x y)
-                    :hidden (-> response
-                                :api/status
-                                :visibility)
-                    "skip operation OnPullRequest action edited" (-> response
-                                                    :status-message))
-               (done)))))
+  (async
+   done
+   (go (let [response (<! ((main/only-process-pr-branch-updates #(go %))
+                           {:operation "OnPullRequest",
+                            :correlation_id "corrid",
+                            :api_version "1",
+                            :data {:PullRequest [{:action "edited"}]}}))]
+         (are [x y]
+              (= x y)
+              :hidden (-> response
+                          :api/status
+                          :visibility)
+              "skip operation OnPullRequest action edited" (-> response
+                                                               :status-message))
+         (done)))))
 
 (enable-console-print!)
 (run-tests)

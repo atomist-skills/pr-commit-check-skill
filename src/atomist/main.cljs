@@ -11,41 +11,41 @@
 (defn only-process-pr-branch-updates
   [handler]
   (fn [request]
-    (go (api/trace "only-process-new-pr-pushes")
-      (let [{:keys [number head action]} (-> request
-                                             :data
-                                             :PullRequest
-                                             first)
-            commit-message (:message head)]
-        (if
-         (and (= "OnPullRequest" (:operation request))
-              (#{"opened" "synchronize"} action))
-          (<! (handler (assoc request
-                         :commit-message commit-message
-                         :pr-number number)))
-          (<! (api/finish (assoc request
-                            :status-message (gstring/format
-                                             "skip operation %s action %s"
-                                             (:operation request)
-                                             action))
-                          :visibility :hidden)))))))
+    (go
+     (api/trace "only-process-new-pr-pushes")
+     (let [{:keys [number head action]} (-> request
+                                            :data
+                                            :PullRequest
+                                            first)
+           commit-message (:message head)]
+       (if (and (= "OnPullRequest" (:operation request))
+                (#{"opened" "synchronize"} action))
+         (<! (handler
+              (assoc request :commit-message commit-message :pr-number number)))
+         (<! (api/finish (assoc request
+                                :status-message
+                                (gstring/format "skip operation %s action %s"
+                                                (:operation request)
+                                                action))
+                         :visibility
+                         :hidden)))))))
 
 (defn send-pr-comment
   [handler]
   (fn [request]
     (go (api/trace "send-pr-comment")
-      (when (= "failure"
-               (-> request
-                   :checkrun/conclusion))
-        (log/debugf
-         "post-pr-comment status %d"
-         (:status (<! (github/post-pr-comment
-                       (merge (:ref request) {:token (:token request)})
-                       (:pr-number request)
-                       (-> request
-                           :checkrun/output
-                           :summary))))))
-      (<! (handler request)))))
+        (when (= "failure"
+                 (-> request
+                     :checkrun/conclusion))
+          (log/debugf
+           "post-pr-comment status %d"
+           (:status (<! (github/post-pr-comment
+                         (merge (:ref request) {:token (:token request)})
+                         (:pr-number request)
+                         (-> request
+                             :checkrun/output
+                             :summary))))))
+        (<! (handler request)))))
 
 (def rules
   [[#"^[a-z]" "The commit message should begin with a capital letter."]
@@ -60,44 +60,46 @@
   [handler]
   (fn [request]
     (go
-      (api/trace "check-commit-message")
-      (try
-        (let [{:keys [owner repo]} (:ref request)]
-          (log/debugf "check the commit-message `%s`" (:commit-message request))
-          (if-let [violations (->> rules
-                                   (map
-                                    (fn [[re violation]]
-                                      (and (re-find re (:commit-message request))
-                                           violation)))
-                                   (filter identity)
-                                   (seq))]
-            (<!
-             (handler
-              (assoc request
-                :status-message (gstring/format
-                                 "Check HEAD commit message on #%d - %s/%s"
-                                 (:pr-number request)
-                                 owner
-                                 repo)
-                :checkrun/conclusion "failure"
-                :checkrun/output
-                {:title "Commit Message Check Failure",
-                 :summary (gstring/format
-                           "## Violations\n%s\n\nsee [How to write a Git Commit Message](https://chris.beams.io/posts/git-commit/#seven-rules)\n\n"
-                           (apply str (interpose "\n" (map #(str "* " %) violations))))})))
-            (<!
-             (handler
-              (assoc request
-                :status-message (gstring/format
-                                 "Check HEAD commit message on #%d - %s/%s"
-                                 (:pr-number request)
-                                 owner
-                                 repo)
-                :checkrun/conclusion "success"
-                :checkrun/output {:title "Commit Message Check Success",
-                                  :summary "message passed all checks"})))))
-        (catch :default ex
-          (<! (handler (assoc request :status-message (str ex)))))))))
+     (api/trace "check-commit-message")
+     (try
+       (let [{:keys [owner repo]} (:ref request)]
+         (log/debugf "check the commit-message `%s`" (:commit-message request))
+         (if-let [violations (->> rules
+                                  (map
+                                   (fn [[re violation]]
+                                     (and (re-find re (:commit-message request))
+                                          violation)))
+                                  (filter identity)
+                                  (seq))]
+           (<!
+            (handler
+             (assoc
+              request
+              :status-message (gstring/format
+                               "Check HEAD commit message on #%d - %s/%s"
+                               (:pr-number request)
+                               owner
+                               repo)
+              :checkrun/conclusion "failure"
+              :checkrun/output
+              {:title "Commit Message Check Failure",
+               :summary
+               (gstring/format
+                "## Violations\n%s\n\nsee [How to write a Git Commit Message](https://chris.beams.io/posts/git-commit/#seven-rules)\n\n"
+                (apply str (interpose "\n" (map #(str "* " %) violations))))})))
+           (<!
+            (handler
+             (assoc request
+                    :status-message (gstring/format
+                                     "Check HEAD commit message on #%d - %s/%s"
+                                     (:pr-number request)
+                                     owner
+                                     repo)
+                    :checkrun/conclusion "success"
+                    :checkrun/output {:title "Commit Message Check Success",
+                                      :summary "message passed all checks"})))))
+       (catch :default ex
+         (<! (handler (assoc request :status-message (str ex)))))))))
 
 (def handle-pr-or-push
   (-> (api/finished)
