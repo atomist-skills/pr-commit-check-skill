@@ -48,13 +48,13 @@ List the Integrations
     ```
     npm run build:watch
     ```
-    
+
 2.  Start up a Node environment
 
     ```
     node index.js
     ```
-    
+
 3.  Connect an nrepl session at `.nrepl-port` and switch to the Node environment using
 
     ```
