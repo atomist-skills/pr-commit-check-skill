@@ -31,13 +31,9 @@ At least one repository must be selected.
 
 1. **Configure the skill as described above**
 
-1. **Commit and push your code changes**
+2. **Commit and push your code changes**
 
-1. **Enjoy automatic formatting!**
-
-## Integrations
-
-List the Integrations
+3. **Skill will add Checks to pull requests with bad commit messages**
 
 <!---atomist-skill-readme:end--->
 
