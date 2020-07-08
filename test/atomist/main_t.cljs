@@ -2,7 +2,8 @@
   (:require [cljs.test :refer-macros
              [deftest is are use-fixtures async run-tests]]
             [cljs.core.async :refer-macros [go] :refer [<!]]
-            [atomist.main :as main]))
+            [atomist.main :as main]
+            [clojure.string :as s]))
 
 (defn- check-message
   [s]
@@ -13,7 +14,7 @@
   (async done
          (go (let [response (<! (check-message "bad first line"))]
                (are [x y]
-                    (= x y)
+                    (s/includes? y x)
                     "failure" (:checkrun/conclusion response)
                     "The commit message should begin with a capital letter."
                     (-> response
@@ -25,7 +26,7 @@
   (async done
          (go (let [response (<! (check-message (apply str (repeat 80 'A))))]
                (are [x y]
-                    (= x y)
+                    (s/includes? y x)
                     "failure" (:checkrun/conclusion response)
                     "The commit message subject is over 50 characters."
                     (-> response
@@ -40,7 +41,7 @@
     (let [response (<! (check-message "This messages ends with a period."))]
       (are
        [x y]
-       (= x y)
+       (s/includes? y x)
        "failure" (:checkrun/conclusion response)
        "The first line of the commit message is the subject, and should not end with a period."
        (-> response
@@ -57,7 +58,7 @@
                "A good start\n\nBut then we fixed and updated and changed"))]
       (are
        [x y]
-       (= x y)
+       (s/includes? y x)
        "failure" (:checkrun/conclusion response)
        "The commit message should be written in the imperative mood, like a command, so 'Add' instead of 'Added'."
        (-> response
@@ -65,27 +66,9 @@
            :summary))
       (done)))))
 
-(deftest skip-pushes-without-prs
-  (async
-   done
-   (go (let [response (<! ((main/only-process-new-pr-pushes #(go %))
-                           {:operation "OnPush",
-                            :correlation_id "corrid",
-                            :api_version "1",
-                            :data {:Push [{:after {:pullRequests []}}]}}))]
-         (are [x y]
-              (= x y)
-              :hidden (-> response
-                          :api/status
-                          :visibility)
-              "skip non-PR OnPush" (-> response
-                                       :api/status
-                                       :status-message))
-         (done)))))
-
 (deftest skip-prs-not-being-opened
   (async done
-         (go (let [response (<! ((main/only-process-new-pr-pushes #(go %))
+         (go (let [response (<! ((main/only-process-pr-branch-updates #(go %))
                                  {:operation "OnPullRequest",
                                   :correlation_id "corrid",
                                   :api_version "1",
@@ -95,7 +78,9 @@
                     :hidden (-> response
                                 :api/status
                                 :visibility)
-                    "skip non-PR OnPullRequest" (-> response
-                                                    :api/status
+                    "skip operation OnPullRequest action edited" (-> response
                                                     :status-message))
                (done)))))
+
+(enable-console-print!)
+(run-tests)
