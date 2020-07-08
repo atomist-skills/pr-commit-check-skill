@@ -7,9 +7,7 @@
 (defn- check-message
   [s]
   ((main/check-commit-message #(go %))
-   {:commit-message s
-    :pr-number 1
-    :ref {:owner "org", :repo "repo"}}))
+   {:commit-message s, :pr-number 1, :ref {:owner "org", :repo "repo"}}))
 
 (deftest check-commit-message-test
   (async done
@@ -70,31 +68,34 @@
 (deftest skip-pushes-without-prs
   (async
    done
-    (go
-     (let [response (<! ((main/only-process-new-pr-pushes #(go %))
-                         {:operation "OnPush"
-                          :correlation_id "corrid"
-                          :api_version "1"
-                          :data {:Push [{:after {:pullRequests []}}]}}))]
-       (are
-        [x y]
-         (= x y)
-         :hidden (-> response :api/status :visibility)
-         "skip non-PR OnPush" (-> response :api/status :status-message))
-       (done)))))
+   (go (let [response (<! ((main/only-process-new-pr-pushes #(go %))
+                           {:operation "OnPush",
+                            :correlation_id "corrid",
+                            :api_version "1",
+                            :data {:Push [{:after {:pullRequests []}}]}}))]
+         (are [x y]
+              (= x y)
+              :hidden (-> response
+                          :api/status
+                          :visibility)
+              "skip non-PR OnPush" (-> response
+                                       :api/status
+                                       :status-message))
+         (done)))))
 
 (deftest skip-prs-not-being-opened
-  (async
-   done
-    (go
-     (let [response (<! ((main/only-process-new-pr-pushes #(go %))
-                         {:operation "OnPullRequest"
-                          :correlation_id "corrid"
-                          :api_version "1"
-                          :data {:PullRequest [{:action "edited"}]}}))]
-       (are
-        [x y]
-         (= x y)
-         :hidden (-> response :api/status :visibility)
-         "skip non-PR OnPullRequest" (-> response :api/status :status-message))
-       (done)))))
+  (async done
+         (go (let [response (<! ((main/only-process-new-pr-pushes #(go %))
+                                 {:operation "OnPullRequest",
+                                  :correlation_id "corrid",
+                                  :api_version "1",
+                                  :data {:PullRequest [{:action "edited"}]}}))]
+               (are [x y]
+                    (= x y)
+                    :hidden (-> response
+                                :api/status
+                                :visibility)
+                    "skip non-PR OnPullRequest" (-> response
+                                                    :api/status
+                                                    :status-message))
+               (done)))))

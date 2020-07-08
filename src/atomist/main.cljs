@@ -12,25 +12,52 @@
   [handler]
   (fn [request]
     (go (api/trace "only-process-new-pr-pushes")
-      (let [commit-message (or (-> request :data :PullRequest first :head :message)
-                               (-> request :data :Push first :after :message))
-            pr-number (or (-> request :data :PullRequest first :number)
-                          (-> request :data :Push first :after :pullRequests first :number))]
-        (cond
-          (and (= "OnPullRequest" (:operation request))
-               (= "opened" (-> request :data :PullRequest first :action)))
-          (<! (handler (assoc request
+        (let [commit-message (or (-> request
+                                     :data
+                                     :PullRequest first
+                                     :head :message)
+                                 (-> request
+                                     :data
+                                     :Push first
+                                     :after :message))
+              pr-number (or (-> request
+                                :data
+                                :PullRequest
+                                first
+                                :number)
+                            (-> request
+                                :data
+                                :Push
+                                first
+                                :after
+                                :pullRequests
+                                first
+                                :number))]
+          (cond
+            (and (= "OnPullRequest" (:operation request))
+                 (= "opened"
+                    (-> request
+                        :data
+                        :PullRequest
+                        first
+                        :action)))
+            (<! (handler (assoc request
+                                :commit-message commit-message
+                                :pr-number pr-number)))
+            (and (= "OnPush" (:operation request))
+                 (seq (-> request
+                          :data
+                          :Push first
+                          :after :pullRequests)))
+            (<! (handler assoc
+                         request
                          :commit-message commit-message
-                         :pr-number pr-number)))
-          (and (= "OnPush" (:operation request))
-               (seq (-> request :data :Push first :after :pullRequests)))
-          (<! (handler assoc request
-                       :commit-message commit-message
-                       :pr-number pr-number))
-          :else
-          (<! (api/finish request
-                          :status-message (gstring/format "skip non-PR %s" (:operation request))
-                          :visibility :hidden)))))))
+                         :pr-number pr-number))
+            :else (<! (api/finish request
+                                  :status-message (gstring/format
+                                                   "skip non-PR %s"
+                                                   (:operation request))
+                                  :visibility :hidden)))))))
 
 (defn send-pr-comment
   [handler]
@@ -67,39 +94,41 @@
   (fn [request]
     (go
      (api/trace "check-commit-message")
-     (try (let [{:keys [owner repo]} (:ref request)]
-            (log/debugf "check the commit-message `%s`" (:commit-message request))
-            (if-let [violations (->> rules
-                                     (map (fn [[re violation]]
-                                            (and (re-find re (:commit-message request))
-                                                 violation)))
-                                     (filter identity)
-                                     (seq))]
-              (<! (handler
-                   (assoc request
-                          :status-message
-                          (gstring/format
-                           "Check HEAD commit message on #%d - %s/%s"
-                           (:pr-number request)
-                           owner
-                           repo)
-                          :checkrun/conclusion "failure"
-                          :checkrun/output
-                          {:title "Contributor Commit Message Check",
-                           :summary (apply str (interpose "\n" violations))})))
-              (<! (handler (assoc request
-                                  :status-message
-                                  (gstring/format
-                                   "Check HEAD commit message on #%d - %s/%s"
-                                   (:pr-number request)
-                                   owner
-                                   repo)
-                                  :checkrun/conclusion "success"
-                                  :checkrun/output
-                                  {:title "Contributor Commit Message Check",
-                                   :summary "Good Commit message"})))))
-          (catch :default ex
-            (<! (handler (assoc request :status-message (str ex)))))))))
+     (try
+       (let [{:keys [owner repo]} (:ref request)]
+         (log/debugf "check the commit-message `%s`" (:commit-message request))
+         (if-let [violations (->> rules
+                                  (map
+                                   (fn [[re violation]]
+                                     (and (re-find re (:commit-message request))
+                                          violation)))
+                                  (filter identity)
+                                  (seq))]
+           (<!
+            (handler
+             (assoc request
+                    :status-message (gstring/format
+                                     "Check HEAD commit message on #%d - %s/%s"
+                                     (:pr-number request)
+                                     owner
+                                     repo)
+                    :checkrun/conclusion "failure"
+                    :checkrun/output
+                    {:title "Contributor Commit Message Check",
+                     :summary (apply str (interpose "\n" violations))})))
+           (<!
+            (handler
+             (assoc request
+                    :status-message (gstring/format
+                                     "Check HEAD commit message on #%d - %s/%s"
+                                     (:pr-number request)
+                                     owner
+                                     repo)
+                    :checkrun/conclusion "success"
+                    :checkrun/output {:title "Contributor Commit Message Check",
+                                      :summary "Good Commit message"})))))
+       (catch :default ex
+         (<! (handler (assoc request :status-message (str ex)))))))))
 
 (def handle-pr-or-push
   (-> (api/finished)
@@ -118,5 +147,5 @@
   [data callback]
   (api/make-request data
                     callback
-                    (api/dispatch {:OnPullRequest handle-pr-or-push
+                    (api/dispatch {:OnPullRequest handle-pr-or-push,
                                    :OnPush handle-pr-or-push})))
