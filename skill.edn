@@ -1,5 +1,11 @@
 {:description "This section supports markdown",
  :license "unknown",
+ :resourceProviders
+ [{:name "github",
+   :description "GitHub",
+   :typeName "GitHubAppResourceProvider",
+   :minRequired 1,
+   :maxAllowed 1}],
  :displayName "pr commit check skill",
  :name "pr-commit-check-skill",
  :author "jim@atomist.com",
@@ -7,17 +13,13 @@
  "https://raw.githubusercontent.com/cljs/logo/master/cljs.png",
  :homepageUrl
  "https://github.com/atomist-skills/pr-commit-check-skill",
+ :parameters
+ [{:repoFilter
+   {:description "The set of Repositories.",
+    :displayName "Repository Scope",
+    :name "scope",
+    :required true}}],
  :namespace "atomist",
- :resourceProviders [{:name "github",
-                      :description "GitHub",
-                      :typeName "GitHubAppResourceProvider",
-                      :minRequired 1,
-                      :maxAllowed 1}]
- :parameters [{:repoFilter
-               {:description "The set of Repositories.",
-                :displayName "Repository Scope",
-                :name "scope",
-                :required true}}]
  :artifacts
  {:gcf
   [{:name "package-cljs-skill",
