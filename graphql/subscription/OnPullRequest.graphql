@@ -3,6 +3,7 @@ subscription OnPullRequest {
     number
     title
     branchName
+    action
     repo {
       id
       name

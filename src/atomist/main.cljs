@@ -8,6 +8,30 @@
             [atomist.github :as github])
   (:require-macros [cljs.core.async.macros :refer [go]]))
 
+(defn only-process-new-pr-pushes
+  [handler]
+  (fn [request]
+    (go (api/trace "only-process-new-pr-pushes")
+      (let [commit-message (or (-> request :data :PullRequest first :head :message)
+                               (-> request :data :Push first :after :message))
+            pr-number (or (-> request :data :PullRequest first :number)
+                          (-> request :data :Push first :after :pullRequests first :number))]
+        (cond
+          (and (= "OnPullRequest" (:operation request))
+               (= "opened" (-> request :data :PullRequest first :action)))
+          (<! (handler (assoc request
+                         :commit-message commit-message
+                         :pr-number pr-number)))
+          (and (= "OnPush" (:operation request))
+               (seq (-> request :data :Push first :after :pullRequests)))
+          (<! (handler assoc request
+                       :commit-message commit-message
+                       :pr-number pr-number))
+          :else
+          (<! (api/finish request
+                          :status-message (gstring/format "skip non-PR %s" (:operation request))
+                          :visibility :hidden)))))))
+
 (defn send-pr-comment
   [handler]
   (fn [request]
@@ -43,18 +67,11 @@
   (fn [request]
     (go
      (api/trace "check-commit-message")
-     (try (let [{:keys [owner repo]} (:ref request)
-                {:keys [number], :as pr} (-> request
-                                             :data
-                                             :PullRequest
-                                             first)
-                commit-message (-> pr
-                                   :head
-                                   :message)]
-            (log/debugf "check the commit-message `%s`" commit-message)
+     (try (let [{:keys [owner repo]} (:ref request)]
+            (log/debugf "check the commit-message `%s`" (:commit-message request))
             (if-let [violations (->> rules
                                      (map (fn [[re violation]]
-                                            (and (re-find re commit-message)
+                                            (and (re-find re (:commit-message request))
                                                  violation)))
                                      (filter identity)
                                      (seq))]
@@ -63,7 +80,7 @@
                           :status-message
                           (gstring/format
                            "Check HEAD commit message on #%d - %s/%s"
-                           number
+                           (:pr-number request)
                            owner
                            repo)
                           :checkrun/conclusion "failure"
@@ -74,7 +91,7 @@
                                   :status-message
                                   (gstring/format
                                    "Check HEAD commit message on #%d - %s/%s"
-                                   number
+                                   (:pr-number request)
                                    owner
                                    repo)
                                   :checkrun/conclusion "success"
@@ -93,6 +110,7 @@
       (api/extract-github-token)
       (api/create-ref-from-event)
       (api/add-skill-config)
+      (only-process-new-pr-pushes)
       (api/log-event)
       (api/status :send-status :status-message)))
 
@@ -100,4 +118,5 @@
   [data callback]
   (api/make-request data
                     callback
-                    (api/dispatch {:OnPullRequest handle-pr-or-push})))
+                    (api/dispatch {:OnPullRequest handle-pr-or-push
+                                   :OnPush handle-pr-or-push})))
