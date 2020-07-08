@@ -16,7 +16,7 @@ At least one repository must be selected.
 
 # How to configure
 
-3.  **Select repositories**
+1.  **Select repositories**
 
     By default, this skill will be enabled for all repositories in all organizations you have connected. To restrict
     the organizations or specific repositories on which the skill will run, you can explicitly
@@ -44,13 +44,22 @@ List the Integrations
 ## Developing
 
 1.  Start a shadow-cljs watch process
+
     ```
     npm run build:watch
     ```
+    
 2.  Start up a Node environment
-    `node index.js`
-    3 Connect an nrepl session at `.nrepl-port` and switch to the Node environment using
-    `=> (shadow/repl :dev)`
+
+    ```
+    node index.js
+    ```
+    
+3.  Connect an nrepl session at `.nrepl-port` and switch to the Node environment using
+
+    ```
+    => (shadow/repl :dev)
+    ```
 
 ### Testing
 
