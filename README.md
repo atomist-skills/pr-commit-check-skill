@@ -42,7 +42,7 @@ At least one repository must be selected.
     This supports markdown and the first `%s` encountered will be subsituted with a markdown array of violations that have been
     found in the message.
 
-    ![template](docs/image/template.png)
+    ![template](docs/images/template.png)
 
 2.  **Choose Rules**
 
@@ -55,7 +55,7 @@ At least one repository must be selected.
     If any part of the message matches the regular expression, the violation will be triggered. The second display
     string is added to help users understand the violation. It can contain markdown.
 
-    ![rules](docs/image/rules.png)
+    ![rules](docs/images/rules.png)
 
 3.  **Select repositories**
 
