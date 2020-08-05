@@ -18,6 +18,7 @@
    {:description "Use this Message template to complain about violations."
     :displayName "Message Template"
     :name "template"
+    :lineStyle "multiple"
     :required true}}
   {:stringArray
    {:description "Use these regular expressions to find violations in the Commit message"
