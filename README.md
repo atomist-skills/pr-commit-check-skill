@@ -6,16 +6,16 @@
 
 Monitor the HEAD commit messages on any incoming pull requests. If they don't conform to a set of rules, then
 add a Comment, and create a failing github check to block merge of the pull request.
- 
-Skill users can control the Comment message sent when there are violations.  The rules are based on regular 
+
+Skill users can control the Comment message sent when there are violations. The rules are based on regular
 expressions, and are added as Strings with the following pattern:
 
 ```
 ["^[a-z]" "The commit message should begin with a capital letter."]
 ```
 
-The first String is the regular expression.  If any part of the Commit message matches this regular expression,
-the skill will trigger a violation.  The second string 
+The first String is the regular expression. If any part of the Commit message matches this regular expression,
+the skill will trigger a violation. The second string
 will be displayed in the pull request comment and the check failure.
 
 # Before you get started
@@ -29,32 +29,32 @@ At least one repository must be selected.
 
 1.  **Choose a message**
 
-    Help users understand that their Commit message does not conform to guidelines.  Use a simple message template like:
-    
+    Help users understand that their Commit message does not conform to guidelines. Use a simple message template like:
+
     ```
-    ## Violations 
-    
+    ## Violations
+
     %s
-    
+
     See [How to write a Git Commit Message](https://chris.beams.io/posts/git-commit/#seven-rules)
     ```
-    
-    This supports markdown and the first `%s` encountered will be subsituted with a markdown array of violations that have been 
+
+    This supports markdown and the first `%s` encountered will be subsituted with a markdown array of violations that have been
     found in the message.
-    
+
     ![template](docs/image/template.png)
-    
+
 2.  **Choose Rules**
 
-    Add regular expression rules.  Each rule must conform to the pattern illustrated here:
-    
+    Add regular expression rules. Each rule must conform to the pattern illustrated here:
+
     ```
     ["^[a-z]" "The commit message should begin with a capital letter."]
     ```
-    
-    If any part of the message matches the regular expression, the violation will be triggered.  The second display
-    string is added to help users understand the violation.  It can contain markdown.
-    
+
+    If any part of the message matches the regular expression, the violation will be triggered. The second display
+    string is added to help users understand the violation. It can contain markdown.
+
     ![rules](docs/image/rules.png)
 
 3.  **Select repositories**
