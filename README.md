@@ -5,7 +5,18 @@
 # What it's useful for
 
 Monitor the HEAD commit messages on any incoming pull requests. If they don't conform to a set of rules, then
-create a failing github check to block merge of the PR. The current rules are [here](https://github.com/atomist-skills/pr-commit-check-skill/blob/master/src/atomist/main.cljs#L50).
+add a Comment, and create a failing github check to block merge of the pull request.
+
+Skill users can control the Comment message sent when there are violations. The rules are based on regular
+expressions, and are added as Strings with the following pattern:
+
+```
+["^[a-z]" "The commit message should begin with a capital letter."]
+```
+
+The first String is the regular expression. If any part of the Commit message matches this regular expression,
+the skill will trigger a violation. The second string
+will be displayed in the pull request comment and the check failure.
 
 # Before you get started
 
@@ -16,7 +27,37 @@ At least one repository must be selected.
 
 # How to configure
 
-1.  **Select repositories**
+1.  **Choose a message**
+
+    Help users understand that their Commit message does not conform to guidelines. Use a simple message template like:
+
+    ```
+    ## Violations
+
+    %s
+
+    See [How to write a Git Commit Message](https://chris.beams.io/posts/git-commit/#seven-rules)
+    ```
+
+    This supports markdown and the first `%s` encountered will be subsituted with a markdown array of violations that have been
+    found in the message.
+
+    ![template](docs/image/template.png)
+
+2.  **Choose Rules**
+
+    Add regular expression rules. Each rule must conform to the pattern illustrated here:
+
+    ```
+    ["^[a-z]" "The commit message should begin with a capital letter."]
+    ```
+
+    If any part of the message matches the regular expression, the violation will be triggered. The second display
+    string is added to help users understand the violation. It can contain markdown.
+
+    ![rules](docs/image/rules.png)
+
+3.  **Select repositories**
 
     By default, this skill will be enabled for all repositories in all organizations you have connected. To restrict
     the organizations or specific repositories on which the skill will run, you can explicitly
