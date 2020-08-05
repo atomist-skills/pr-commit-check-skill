@@ -15,11 +15,11 @@
          (go (let [response (<! (check-message "bad first line"))]
                (are [x y]
                     (s/includes? y x)
-                    "failure" (:checkrun/conclusion response)
-                    "The commit message should begin with a capital letter."
-                    (-> response
-                        :checkrun/output
-                        :summary))
+                 "failure" (:checkrun/conclusion response)
+                 "The commit message should begin with a capital letter."
+                 (-> response
+                     :checkrun/output
+                     :summary))
                (done)))))
 
 (deftest check-long-first-line
@@ -27,60 +27,60 @@
          (go (let [response (<! (check-message (apply str (repeat 80 'A))))]
                (are [x y]
                     (s/includes? y x)
-                    "failure" (:checkrun/conclusion response)
-                    "The commit message subject is over 50 characters."
-                    (-> response
-                        :checkrun/output
-                        :summary))
+                 "failure" (:checkrun/conclusion response)
+                 "The commit message subject is over 50 characters."
+                 (-> response
+                     :checkrun/output
+                     :summary))
                (done)))))
 
 (deftest check-ending-with-a-period
   (async
    done
    (go
-    (let [response (<! (check-message "This messages ends with a period."))]
-      (are
-       [x y]
-       (s/includes? y x)
-       "failure" (:checkrun/conclusion response)
-       "The first line of the commit message is the subject, and should not end with a period."
-       (-> response
-           :checkrun/output
-           :summary))
-      (done)))))
+     (let [response (<! (check-message "This messages ends with a period."))]
+       (are
+        [x y]
+        (s/includes? y x)
+         "failure" (:checkrun/conclusion response)
+         "The first line of the commit message is the subject, and should not end with a period."
+         (-> response
+             :checkrun/output
+             :summary))
+       (done)))))
 
 (deftest check-imperative-tense
   (async
    done
    (go
-    (let [response
-          (<! (check-message
-               "A good start\n\nBut then we fixed and updated and changed"))]
-      (are
-       [x y]
-       (s/includes? y x)
-       "failure" (:checkrun/conclusion response)
-       "The commit message should be written in the imperative mood, like a command, so 'Add' instead of 'Added'."
-       (-> response
-           :checkrun/output
-           :summary))
-      (done)))))
+     (let [response
+           (<! (check-message
+                "A good start\n\nBut then we fixed and updated and changed"))]
+       (are
+        [x y]
+        (s/includes? y x)
+         "failure" (:checkrun/conclusion response)
+         "The commit message should be written in the imperative mood, like a command, so 'Add' instead of 'Added'."
+         (-> response
+             :checkrun/output
+             :summary))
+       (done)))))
 
 (deftest skip-prs-not-being-opened
   (async
    done
    (go (let [response (<! ((main/only-process-pr-branch-updates #(go %))
-                           {:operation "OnPullRequest",
-                            :correlation_id "corrid",
-                            :api_version "1",
+                           {:operation "OnPullRequest"
+                            :correlation_id "corrid"
+                            :api_version "1"
                             :data {:PullRequest [{:action "edited"}]}}))]
          (are [x y]
               (= x y)
-              :hidden (-> response
-                          :api/status
-                          :visibility)
-              "skip operation OnPullRequest action edited" (-> response
-                                                               :status-message))
+           :hidden (-> response
+                       :api/status
+                       :visibility)
+           "skip operation OnPullRequest action edited" (-> response
+                                                            :status-message))
          (done)))))
 
 (enable-console-print!)
