@@ -20,8 +20,8 @@
 (defn- check-message
   [s]
   ((main/check-commit-message #(go %))
-   {:commit-message s,
-    :pr-number 1,
+   {:commit-message s
+    :pr-number 1
     :ref {:owner "org", :repo "repo"}
     :template message
     :rules rules}))
