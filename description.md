@@ -1,1 +1,1 @@
-Support _markdown_
+Validate that Commit messages conform to conventions.
