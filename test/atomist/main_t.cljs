@@ -5,10 +5,26 @@
             [atomist.main :as main]
             [clojure.string :as s]))
 
+(def rules
+  ["[\"^[a-z]\" \"The commit message should begin with a capital letter.\"]"
+   "[\"^[^\\n]{51}\" \"The commit message subject is over 50 characters.\"]"
+   "[\"^[^\\n]*\\\\.(\\n|$)\" \"The first line of the commit message is the subject, and should not end with a period.\"]"
+   "[\"^[Aa]dded|[Ff]ixed|[Uu]pdated|[Cc]hanged\" \"The commit message should be written in the imperative mood, like a command, so 'Add' instead of 'Added'.\"]"])
+
+(def regexes (->> rules
+                  (map (comp re-pattern first main/read-rule))
+                  (into [])))
+
+(def message "## Violations\n%s\n\nsee [How to write a Git Commit Message](https://chris.beams.io/posts/git-commit/#seven-rules)\n\n")
+
 (defn- check-message
   [s]
   ((main/check-commit-message #(go %))
-   {:commit-message s, :pr-number 1, :ref {:owner "org", :repo "repo"}}))
+   {:commit-message s,
+    :pr-number 1,
+    :ref {:owner "org", :repo "repo"}
+    :template message
+    :rules rules}))
 
 (deftest check-commit-message-test
   (async done
