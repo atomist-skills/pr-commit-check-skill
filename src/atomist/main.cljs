@@ -48,13 +48,14 @@
                              :summary))))))
         (<! (handler request)))))
 
-(def rules
-  ["[\"^[a-z]\" \"The commit message should begin with a capital letter.\"]"
-   "[\"^[^\\n]{51}\" \"The commit message subject is over 50 characters.\"]"
-   "[\"^[^\\n]*\\\\.(\\n|$)\" \"The first line of the commit message is the subject, and should not end with a period.\"]"
-   "[\"^[Aa]dded|[Ff]ixed|[Uu]pdated|[Cc]hanged\" \"The commit message should be written in the imperative mood, like a command, so 'Add' instead of 'Added'.\"]"])
+(comment
+ (def rules
+   ["[\"^[a-z]\" \"The commit message should begin with a capital letter.\"]"
+    "[\"^[^\\n]{51}\" \"The commit message subject is over 50 characters.\"]"
+    "[\"^[^\\n]*\\\\.(\\n|$)\" \"The first line of the commit message is the subject, and should not end with a period.\"]"
+    "[\"^[Aa]dded|[Ff]ixed|[Uu]pdated|[Cc]hanged\" \"The commit message should be written in the imperative mood, like a command, so 'Add' instead of 'Added'.\"]"])
 
-(def message "## Violations\n%s\n\nsee [How to write a Git Commit Message](https://chris.beams.io/posts/git-commit/#seven-rules)\n\n")
+ (def message "## Violations\n%s\n\nsee [How to write a Git Commit Message](https://chris.beams.io/posts/git-commit/#seven-rules)\n\n"))
 
 (defn- read-rule [s]
   (try
