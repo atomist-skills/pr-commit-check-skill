@@ -1,1 +1,1 @@
-Validate that Commit messages conform to conventions
+Validate that Commit messages conform to conventions.
