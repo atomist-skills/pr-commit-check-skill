@@ -14,7 +14,18 @@
  :homepageUrl
  "https://github.com/atomist-skills/pr-commit-check-skill",
  :parameters
- [{:repoFilter
+ [{:string
+   {:description "Use this Message template to complain about violations."
+    :displayName "Message Template"
+    :name "template"
+    :required true}}
+  {:stringArray
+   {:description "Use these regular expressions to find violations in the Commit message"
+    :displayName "Regular Expression Violations"
+    :name "rules"
+    :minRequired 1
+    :required true}}
+  {:repoFilter
    {:description "The set of Repositories.",
     :displayName "Repository Scope",
     :name "scope",

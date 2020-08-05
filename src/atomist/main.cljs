@@ -5,7 +5,8 @@
             [clojure.data]
             [goog.string :as gstring]
             [atomist.cljs-log :as log]
-            [atomist.github :as github])
+            [atomist.github :as github]
+            [cljs.reader :refer [read-string]])
   (:require-macros [cljs.core.async.macros :refer [go]]))
 
 (defn only-process-pr-branch-updates
@@ -48,12 +49,19 @@
         (<! (handler request)))))
 
 (def rules
-  [[#"^[a-z]" "The commit message should begin with a capital letter."]
-   [#"^[^\n]{51}" "The commit message subject is over 50 characters."]
-   [#"^[^\n]*\.(\n|$)"
-    "The first line of the commit message is the subject, and should not end with a period."]
-   [#"^[Aa]dded|[Ff]ixed|[Uu]pdated|[Cc]hanged"
-    "The commit message should be written in the imperative mood, like a command, so 'Add' instead of 'Added'."]])
+  ["[\"^[a-z]\" \"The commit message should begin with a capital letter.\"]"
+   "[\"^[^\\n]{51}\" \"The commit message subject is over 50 characters.\"]"
+   "[\"^[^\\n]*\\\\.(\\n|$)\" \"The first line of the commit message is the subject, and should not end with a period.\"]"
+   "[\"^[Aa]dded|[Ff]ixed|[Uu]pdated|[Cc]hanged\" \"The commit message should be written in the imperative mood, like a command, so 'Add' instead of 'Added'.\"]"])
+
+(def message "## Violations\n%s\n\nsee [How to write a Git Commit Message](https://chris.beams.io/posts/git-commit/#seven-rules)\n\n")
+
+(defn- read-rule [s]
+  (try
+    (read-string s)
+    (catch :default ex
+      (log/error ex)
+      (log/warnf "error parsing %s" s))))
 
 (defn check-commit-message
   "check the commit-message"
@@ -64,11 +72,13 @@
      (try
        (let [{:keys [owner repo]} (:ref request)]
          (log/debugf "check the commit-message `%s`" (:commit-message request))
-         (if-let [violations (->> rules
+         (if-let [violations (->> (:rules request)
+                                  (map read-rule)
                                   (map
                                    (fn [[re violation]]
-                                     (and (re-find re (:commit-message request))
-                                          violation)))
+                                     (when re
+                                       (and (re-find (re-pattern re) (:commit-message request))
+                                            violation))))
                                   (filter identity)
                                   (seq))]
            (<!
@@ -85,7 +95,7 @@
               {:title "Commit Message Check Failure",
                :summary
                (gstring/format
-                "## Violations\n%s\n\nsee [How to write a Git Commit Message](https://chris.beams.io/posts/git-commit/#seven-rules)\n\n"
+                (:template request)
                 (apply str (interpose "\n" (map #(str "* " %) violations))))})))
            (<!
             (handler
