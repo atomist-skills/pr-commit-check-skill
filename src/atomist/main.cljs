@@ -108,7 +108,6 @@
       (send-pr-comment)
       (check-commit-message)
       (api/with-github-check-run :name "pr-commit-check-skill")
-      (api/clone-ref)
       (api/extract-github-token)
       (api/create-ref-from-event)
       (api/add-skill-config)
