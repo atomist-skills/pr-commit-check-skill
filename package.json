@@ -10,15 +10,15 @@
     "atm:lint:prettier": "prettier --write"
   },
   "dependencies": {
-    "@atomist/api-cljs": "^0.4.77",
+    "@atomist/api-cljs": "^0.4.111",
     "js-yaml": "^3.14.0"
   },
   "devDependencies": {
-    "@atomist/skill-bundler": "^0.1.13",
-    "husky": "^4.2.5",
-    "lint-staged": "^10.2.11",
-    "prettier": "^2.0.5",
-    "shadow-cljs": "^2.10.19",
+    "@atomist/skill-bundler": "^0.1.26",
+    "husky": "^4.3.0",
+    "lint-staged": "^10.4.0",
+    "prettier": "^2.1.2",
+    "shadow-cljs": "^2.11.5",
     "source-map-support": "0.5.9",
     "ws": "^7.3.1"
   },
