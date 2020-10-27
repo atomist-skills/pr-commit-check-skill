@@ -2,8 +2,8 @@
   "name": "atomist-skill",
   "version": "0.1.0",
   "scripts": {
-    "build:watch": "shadow-cljs watch dev",
-    "build": "shadow-cljs release release",
+    "build:watch": "shadow-cljs watch dev -A:dev:test",
+    "build": "shadow-cljs release release -A:dev:build",
     "bundle": "bundle",
     "skill": "npm run build && npm run bundle",
     "test": "shadow-cljs compile test",
