@@ -20,7 +20,7 @@
     "prettier": "^2.1.2",
     "shadow-cljs": "^2.11.7",
     "source-map-support": "0.5.9",
-    "ws": "^7.3.1"
+    "ws": "^7.4.0"
   },
   "main": "node_modules/@atomist/api-cljs/app.js",
   "husky": {
