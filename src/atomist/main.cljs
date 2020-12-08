@@ -33,17 +33,35 @@
                                              :PullRequest
                                              first)
             commit-message (:message head)]
-        (if (and (= "OnPullRequest" (:operation request))
-                 (#{"opened" "synchronize"} action))
+        (cond
+          ;; event looks good
+          (and (= "OnPullRequest" (:operation request))
+               (#{"opened" "synchronize"} action)
+               commit-message)
           (<! (handler
                (assoc request :commit-message commit-message :pr-number number)))
+          ;; this is a PullRequest but there's no commit message to check
+          (and (= "OnPullRequest" (:operation request))
+               (not (#{"opened" "synchronize"} action)))
           (<! (api/finish (assoc request
                                  :status-message
                                  (gstring/format "skip operation %s action %s"
                                                  (:operation request)
                                                  action))
-                          :visibility
-                          :hidden)))))))
+                          :visibility :hidden))
+          ;; we should not see empty commit messages - most likely a bug elsewhere but there's no point
+          ;; create a CheckRun here.  Flag these and investigate why we're seeing null commit messages
+          (and
+           (= "OnPullRequest" (:operation request))
+           (#{"opened" "synchronize"} action)
+           (not commit-message))
+          (<! (api/finish
+               (assoc request
+                      :status-message
+                      (gstring/format ""
+                                      (:operation request)
+                                      action))
+               :failure "Should have processed this PullRequest but commit message was null")))))))
 
 (defn send-pr-comment
   [handler]
