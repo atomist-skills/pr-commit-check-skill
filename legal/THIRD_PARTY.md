@@ -203,7 +203,7 @@ MIT License - [https://opensource.org/licenses/MIT](https://opensource.org/licen
 | `is-stream`               | `2.0.0`    | Sindre Sorhus       | [https://github.com/sindresorhus/is-stream](https://github.com/sindresorhus/is-stream)                                                         |
 | `is-typedarray`           | `1.0.0`    | Hugh Kennedy        | [https://github.com/hughsk/is-typedarray](https://github.com/hughsk/is-typedarray)                                                             |
 | `is`                      | `3.3.0`    | Enrico Marino       | [https://github.com/enricomarino/is](https://github.com/enricomarino/is)                                                                       |
-| `js-yaml`                 | `3.14.0`   | Vladimir Zapparov   | [https://github.com/nodeca/js-yaml](https://github.com/nodeca/js-yaml)                                                                         |
+| `js-yaml`                 | `3.14.1`   | Vladimir Zapparov   | [https://github.com/nodeca/js-yaml](https://github.com/nodeca/js-yaml)                                                                         |
 | `json-bigint`             | `1.0.0`    | Andrey Sidorov      | [https://github.com/sidorares/json-bigint](https://github.com/sidorares/json-bigint)                                                           |
 | `jwa`                     | `2.0.0`    | Brian J. Brennan    | [https://github.com/brianloveswords/node-jwa](https://github.com/brianloveswords/node-jwa)                                                     |
 | `jws`                     | `4.0.0`    | Brian J Brennan     | [https://github.com/brianloveswords/node-jws](https://github.com/brianloveswords/node-jws)                                                     |
