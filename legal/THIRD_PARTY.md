@@ -170,7 +170,7 @@ MIT License - [https://opensource.org/licenses/MIT](https://opensource.org/licen
 | `concat-map`              | `0.0.1`    | James Halliday      | [https://github.com/substack/node-concat-map](https://github.com/substack/node-concat-map)                                                     |
 | `crypto-random-string`    | `2.0.0`    | Sindre Sorhus       | [https://github.com/sindresorhus/crypto-random-string](https://github.com/sindresorhus/crypto-random-string)                                   |
 | `d64`                     | `1.0.0`    | Dominic Tarr        | [https://github.com/dominictarr/d64](https://github.com/dominictarr/d64)                                                                       |
-| `date-and-time`           | `0.14.1`   | KNOWLEDGECODE       | [https://github.com/knowledgecode/date-and-time](https://github.com/knowledgecode/date-and-time)                                               |
+| `date-and-time`           | `0.14.2`   | KNOWLEDGECODE       | [https://github.com/knowledgecode/date-and-time](https://github.com/knowledgecode/date-and-time)                                               |
 | `debug`                   | `4.3.1`    | TJ Holowaychuk      | [https://github.com/visionmedia/debug](https://github.com/visionmedia/debug)                                                                   |
 | `decamelize`              | `1.2.0`    | Sindre Sorhus       | [https://github.com/sindresorhus/decamelize](https://github.com/sindresorhus/decamelize)                                                       |
 | `dot-prop`                | `5.3.0`    | Sindre Sorhus       | [https://github.com/sindresorhus/dot-prop](https://github.com/sindresorhus/dot-prop)                                                           |
