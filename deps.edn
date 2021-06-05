@@ -14,14 +14,14 @@
 
 {:paths ["src"],
  :deps
- {org.clojure/clojurescript {:mvn/version "1.10.844"},
+ {org.clojure/clojurescript {:mvn/version "1.10.866"},
   com.atomist/api-cljs {:mvn/version "0.5.68"}},
  :aliases
  {:dev
   {:extra-deps
    {org.clojure/clojure {:mvn/version "1.10.3"},
-    org.clojure/clojurescript {:mvn/version "1.10.844"},
-    thheller/shadow-cljs {:mvn/version "2.12.5"}},
+    org.clojure/clojurescript {:mvn/version "1.10.866"},
+    thheller/shadow-cljs {:mvn/version "2.14.2"}},
    :extra-paths ["dev"]},
   :test {:extra-paths ["test" "/Users/slim/atmhq/api-cljs/src"]},
   :cljfmt
