@@ -14,7 +14,7 @@
     "js-yaml": "^3.14.1"
   },
   "devDependencies": {
-    "@atomist/skill-bundler": "^0.1.35",
+    "@atomist/skill-bundler": "^0.1.43",
     "husky": "^4.3.5",
     "lint-staged": "^10.5.4",
     "prettier": "^2.3.2",
