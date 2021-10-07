@@ -154,7 +154,7 @@ MIT License - [https://opensource.org/licenses/MIT](https://opensource.org/licen
 | `@types/node`             | `13.13.35` |                     | [https://github.com/DefinitelyTyped/DefinitelyTyped](https://github.com/DefinitelyTyped/DefinitelyTyped)                                       |
 | `abort-controller`        | `3.0.0`    | Toru Nagashima      | [https://github.com/mysticatea/abort-controller](https://github.com/mysticatea/abort-controller)                                               |
 | `agent-base`              | `6.0.2`    | Nathan Rajlich      | [https://github.com/TooTallNate/node-agent-base](https://github.com/TooTallNate/node-agent-base)                                               |
-| `ansi-regex`              | `5.0.0`    | Sindre Sorhus       | [https://github.com/chalk/ansi-regex](https://github.com/chalk/ansi-regex)                                                                     |
+| `ansi-regex`              | `5.0.1`    | Sindre Sorhus       | [https://github.com/chalk/ansi-regex](https://github.com/chalk/ansi-regex)                                                                     |
 | `ansi-styles`             | `4.3.0`    | Sindre Sorhus       | [https://github.com/chalk/ansi-styles](https://github.com/chalk/ansi-styles)                                                                   |
 | `argparse`                | `1.0.10`   |                     | [https://github.com/nodeca/argparse](https://github.com/nodeca/argparse)                                                                       |
 | `arrify`                  | `2.0.1`    | Sindre Sorhus       | [https://github.com/sindresorhus/arrify](https://github.com/sindresorhus/arrify)                                                               |
